@@ -8,7 +8,6 @@ from nltk.corpus import wordnet
 import python_weather
 import asyncio
 import geonamescache
-from datetime import datetime
 import wikipediaapi
 
 
@@ -21,38 +20,39 @@ def generate_token(msg):
 
 
 async def weather_api(message):
+    """Weather API: Takes the location from the message, searches for it and brings back the forcast"""
 
-    location_i = message.index("weather") + 1
-    location = message[location_i]
-    print(message)
-    gc = geonamescache.GeonamesCache()
-    city = gc.search_cities(location, case_sensitive=False)
-    if not city:
+    location_i = message.index("weather") + 1                   ## Get the index of the next word after weather as this is most likely the location
+    location = message[location_i]                              ## Get the location
+
+    gc = geonamescache.GeonamesCache()                          ## Set up the geonames
+    city = gc.search_cities(location, case_sensitive=False)     ## Search for the city in the message
+    if not city:                                                ## If it doesnt exist return
         return " ".join(message)
 
     client = python_weather.Client(format=python_weather.METRIC)
 
-    weather = await client.find(location)
+    weather = await client.find(location)                       ## Gather weather information
 
     await client.close()
 
     return weather.forecasts
 
 def wiki_api(message):
+    """Wikipedia API: Takes the message and see's if it matches any existing wikipedia pages and returns them"""
 
-    wiki_search = " ".join(message)
-    wiki_wiki = wikipediaapi.Wikipedia('en')
+    wiki_search = " ".join(message)                     ## Combine the keywords into string
+    wiki_wiki = wikipediaapi.Wikipedia('en')            ## Setup wikipedia API
+    wiki_page = wiki_wiki.page(wiki_search)             ## Search wikipedia for the key words
 
-    wiki_page = wiki_wiki.page(wiki_search)
-
-    if wiki_page.exists() == False:
+    if wiki_page.exists() == False:                     ## Check if the page exists
         return None
 
-    wiki_title = wiki_page.title
+    wiki_title = wiki_page.title                        ## Gather title, summary and link the new page if it exists
     wiki_summary = wiki_page.summary[0:250]
     wiki_url = wiki_page.fullurl
 
-    return f'I found the page {wiki_title} on wikipedia\n\nHere is a Summary:\n{wiki_summary}\n\nYou can read the article here: {wiki_url}'
+    return f'I found the page {wiki_title} on wikipedia\n\nHere is a Summary:\n{wiki_summary}...\n\nYou can read the article here: {wiki_url}'
 
 
 
@@ -109,9 +109,11 @@ class Botler:
 
         # Check if the tokens have the word weather
         if "weather" in tokens_without_sw:
+            # Run a coroutine to get the weather data
             loop = asyncio.get_event_loop()
             forcast = loop.run_until_complete(weather_api(tokens_without_sw))
             response = "Here is the forcast for the next week:\n\n"
+            # Run through the returned values to give a reponse as a forcast
             for f in forcast:
                 response = response + f'On the {str(f.date.strftime("%b %d, %Y"))}\nit will be {f.temperature}°C and {f.sky_text}\n\n'
         elif any(word in 'what why where when who how' for word in msg):
