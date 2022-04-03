@@ -5,14 +5,56 @@ from stopwords import stopwords
 from nltk.sentiment import SentimentIntensityAnalyzer
 from language_pairs import pairs
 from nltk.corpus import wordnet
+import python_weather
+import asyncio
+import geonamescache
+from datetime import datetime
+import wikipediaapi
 
 
 def generate_token(msg):
     """Tokenize response and remove all stop words to simplify the statement"""
     text_tokens = wordpunct_tokenize(msg)
     tokens_without_sw = [word for word in text_tokens if not word in stopwords]
-    print("Generated tokens: ", " ".join(tokens_without_sw))
-    return " ".join(tokens_without_sw)
+
+    return tokens_without_sw
+
+
+async def weather_api(message):
+
+    location_i = message.index("weather") + 1
+    location = message[location_i]
+    print(message)
+    gc = geonamescache.GeonamesCache()
+    city = gc.search_cities(location, case_sensitive=False)
+    if not city:
+        return " ".join(message)
+
+    client = python_weather.Client(format=python_weather.METRIC)
+
+    weather = await client.find(location)
+
+    await client.close()
+
+    return weather.forecasts
+
+def wiki_api(message):
+
+    wiki_search = " ".join(message)
+    wiki_wiki = wikipediaapi.Wikipedia('en')
+
+    wiki_page = wiki_wiki.page(wiki_search)
+
+    if wiki_page.exists() == False:
+        return None
+
+    wiki_title = wiki_page.title
+    wiki_summary = wiki_page.summary[0:250]
+    wiki_url = wiki_page.fullurl
+
+    return f'I found the page {wiki_title} on wikipedia\n\nHere is a Summary:\n{wiki_summary}\n\nYou can read the article here: {wiki_url}'
+
+
 
 def Detect_Synonym(msg):
     text_tokens = msg.split()                           ## tokenizes based on spaces, does not make `'` a separate token
@@ -61,12 +103,23 @@ class Botler:
         # Generate a response from the chatbot
         response = self.chat.respond(clean_input)
 
-        # If response is still none, tokenize words and try again
+        # If response is still none, tokenize words
         if not response:
             tokens_without_sw = generate_token(clean_input)
-            response = self.chat.respond(tokens_without_sw)
+
+        # Check if the tokens have the word weather
+        if "weather" in tokens_without_sw:
+            loop = asyncio.get_event_loop()
+            forcast = loop.run_until_complete(weather_api(tokens_without_sw))
+            response = "Here is the forcast for the next week:\n\n"
+            for f in forcast:
+                response = response + f'On the {str(f.date.strftime("%b %d, %Y"))}\nit will be {f.temperature}°C and {f.sky_text}\n\n'
+        elif any(word in 'what why where when who how' for word in msg):
+            response = wiki_api(tokens_without_sw)
+        else:
+            response = self.chat.respond(" ".join(tokens_without_sw))
         
-        #if not response:
+        # If not response:
         if not response:
             response = self.chat.respond(Detect_Synonym(clean_input))
 
