@@ -1,4 +1,4 @@
-# M.A.A.M.Y's Chat Bot
+# M.A.A.M.Y's Chat Bot (Individual Project)
 Software Engineering Term 2, 2022
 
 Our group has decide to create a chatbot using python. We have used the <a href="https://www.nltk.org/" target="_blank">***NLTK***</a> python Library in order to create our chatbot. The bot will be taking the role of a sassy, well educated, butler with a good scence of humour, meanwhile the user will take the role of its master.
@@ -20,44 +20,56 @@ The MIT liscence is in this same direcory and is named <a href="https://github.c
 
 ## Sample output
 
-A2: Terminal Conversation Flow
+		B:Hi, I'm Botler want to have a conversation with you!
+		B:Please speak to me in lowercase English. Type quit if you wish to end this conversation. 
+		U:hello
+		B:Greetings!
+		U:my name is Matthew
+		B:Hello matthew, How are you feeling today?
+		U:I am a bit concerned about this recent stock market fiasco
+		B:Do not be alarmed sir, I've handled your investments accordingly
+		U:sorry for ever doubting you
+		B:You needn't worry at all
+		U:can you find the next best stock for me
+		B:I am unable to search for the next best stock, for now.
+		U:sorry for expecting so much
+		B:You needn't worry at all
+		U:have you seen my underwear?
+		B:I believe you left it under your bed again sir
+		U:I like underwear  
+		B:Exquisite taste sir
+		U:i am not a sir
+		B:Apologies, but sir it is the best I can do.
+		U:you're being difficult
+		B:You literally programed me, I can only say what you allowed me to say
+		U: What is the weather in Kelowna Bolter?
+		B: Here is the forcast for the next week:
+			On the Apr 02, 2022
+			it will be 8°C and Cloudy
 
-        B:Hi, I'm Botler want to have a conversation with you!
-        B:Please speak to me in lowercase English. Type quit if you wish to end this conversation. 
-        U:hello
-        B:Greetings!
-        U:my name is Matthew
-        B:Hello matthew, How are you feeling today?
-        U:I am a bit concerned about this recent stock market fiasco
-        B:Do not be alarmed sir, I've handled your investments accordingly
-        U:sorry for ever doubting you
-        B:You needn't worry at all
-        U:can you find the next best stock for me
-        B:I am unable to search for the next best stock, for now.
-        U:sorry for expecting so much
-        B:You needn't worry at all
-        U:have you seen my underwear?
-        B:I believe you left it under your bed again sir
-        U:I like underwear  
-        B:Exquisite taste sir
-        U:i am not a sir
-        B:Apologies, but sir it is the best I can do.
-        U:you're being difficult
-        B:You literally programed me, I can only say what you allowed me to say
-        U:i love you botler, and you have to love me back
-        B:That is sweet sir, but I only think of you as a an aquaintence
-        U:that was mean
-        B:I am doing my best to be polite, you are just making it difficult
-        U:yes    
-        B:Glad we agree
-        U:sorry botler, i was argumentative
-        B:It is already forgiven.
-        U:can you make me happy
-        B:Of course, sire, I will get you happy but first I'll need milk, brb
-        U:how long will it take you to make me happy
-        B:I cannot say, an hour, a week maybe a decade.  You must find it in yourself to wait
-        U:quit
-        B:Thank you for chatting with me
+			On the Apr 03, 2022
+			it will be 10°C and Mostly Cloudy
+
+			On the Apr 04, 2022
+			it will be 7°C and Partly Sunny
+
+			On the Apr 05, 2022
+			it will be 2°C and Mostly Cloudy
+
+			On the Apr 06, 2022
+			it will be 6°C and Cloudy
+		U: What is JavaScript
+		B:I found the page JavaScript on wikipedia
+
+			Here is a Summary:
+			JavaScript (), often abbreviated JS, is a programming language 
+			that is one of the core technologies of the World Wide Web, 
+			alongside HTML and CSS. Over 97% of websites use JavaScript on 
+			the client side for web page behavior, often incorporating third...
+
+			You can read the article here: https://en.wikipedia.org/wiki/JavaScript
+		U:quit
+		B:Thank you for chatting with me
 	
 ## A3: Git Commit Graph
 
@@ -83,7 +95,7 @@ As you can see, we can now handle upper case but also mixed case.
         B:Sorry sir, I didn't understand
 Botler responds this way because Botler cannot recognize a phraze that is not exactly the same as what it uses as examples.
 
-## A3: Features and improvements
+## Features
 
 1. Case Handling: Botler now handles all types of cases lower, upper and mixed case.
 
@@ -118,6 +130,12 @@ More details about unit testing can be found [here](#unit-testing).
 	3) Sentiment Analysis: Botler has an advanced understanding of the English lexicon and can help a user understand the tone of one’s email. 
 	4) Continuous Chat: Botlers ability to handle long drawn out conversations can be utilized to handle email conversations you just really don’t want to have.
 	5) Unique Dialogue Library: Botler can handle all your automated messages through use of its language library. This could be implanted as an API so that an email gets forwarded to it and the library would allow Botler to select the correct, and polite, reply. 
+
+### New Features since A3
+
+7. Weather API: Bolter now uses ```Python_weather``` and ```geonamescache``` to find and give the user the forcast for the week ahead.  Using the tokenization from A3 Bolter searches for the keyword weather and if it exists imediately calls the ```weather_api``` function which finds the location the user was looking for, checks if the city exists and then provides the weather report for the following week in that location.
+
+8. Wikipedia API: Bolter can now access Wikipedia to answer users questions if it does not understand what they were saying immediately.  If the user uses one of the five key words What, why, who, where, how, the program will call the ```wikipedia_api``` function.  In this function it will concatinate the remaining key words and then search wikipedia to see if there is an article with that title.  If there is one the bot will return the title, summary and the url for more reading.
 
 
 ## Class Organization
